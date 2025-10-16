@@ -1,18 +1,19 @@
+import os
 import time
 import threading
 import requests
-import yaml
 from datetime import datetime
 from flask import Flask
 
 # ------------------------
-# Load config
+# Config from Environment
 # ------------------------
-with open("config.yml", "r") as f:
-    config = yaml.safe_load(f)
+TOKEN = os.environ.get("8484092692:AAFtANihKiWqkY81zoU_cmdU3jxfGQuxsU4)
+CHAT_ID = os.environ.get("748712375")
 
-TOKEN = config["telegram"]["token"]
-CHAT_ID = config["telegram"]["chat_id"]
+if not TOKEN or not CHAT_ID:
+    raise ValueError("Please set TELEGRAM_TOKEN and TELEGRAM_CHAT as environment variables.")
+
 POLL_INTERVAL = 300  # 5 minutes
 
 EXCHANGES = [
@@ -111,7 +112,10 @@ if __name__ == "__main__":
     # Start Telegram polling in background
     threading.Thread(target=poll_telegram, daemon=True).start()
     # Start exchange checking in background
-    threading.Thread(target=lambda: [check_exchanges() or time.sleep(POLL_INTERVAL) for _ in iter(int, 1)], daemon=True).start()
+    threading.Thread(
+        target=lambda: [check_exchanges() or time.sleep(POLL_INTERVAL) for _ in iter(int, 1)],
+        daemon=True
+    ).start()
 
     # Send startup message
     send_message(CHAT_ID, "✅ Bot started and monitoring 11 exchanges.", buttons=[[{"text": "📊 Status"}]])
