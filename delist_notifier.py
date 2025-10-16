@@ -8,8 +8,8 @@ from flask import Flask
 # ------------------------
 # Config from Environment
 # ------------------------
-TOKEN = os.environ.get("8484092692:AAFtANihKiWqkY81zoU_cmdU3jxfGQuxsU4)
-CHAT_ID = os.environ.get("748712375")
+TOKEN = os.environ.get("TELEGRAM_TOKEN")
+CHAT_ID = os.environ.get("TELEGRAM_CHAT")
 
 if not TOKEN or not CHAT_ID:
     raise ValueError("Please set TELEGRAM_TOKEN and TELEGRAM_CHAT as environment variables.")
@@ -64,9 +64,10 @@ def handle_message(message):
     if text in ["/start", "start"]:
         send_message(
             chat_id,
-            "👋 Hello! I monitor *crypto delistings* from 11 exchanges.\n"
-            "I check every 5 minutes.\n\n"
-            "Press the button below to check status:",
+            """👋 Hello! I monitor *crypto delistings* from 11 exchanges.
+I check every 5 minutes.
+
+Press the button below to check status:""",
             buttons=[[{"text": "📊 Status"}]]
         )
     elif text in ["/status", "📊 status", "status"]:
@@ -81,8 +82,11 @@ def handle_message(message):
             status = "⏳ Bot started but has not yet performed the first check."
         send_message(chat_id, status, buttons=[[{"text": "📊 Status"}]])
     else:
-        send_message(chat_id, "Press the button below to see status:",
-                     buttons=[[{"text": "📊 Status"}]])
+        send_message(
+            chat_id,
+            "Press the button below to see status:",
+            buttons=[[{"text": "📊 Status"}]]
+        )
 
 # ------------------------
 # Exchange checker
